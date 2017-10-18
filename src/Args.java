@@ -23,14 +23,14 @@ public class Args {
 		OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT;
 	}
 	
-	public Args(String schema, String[] args){
+	public Args(String schema, String[] args) throws ParseException{
 		this.schema = schema;
 		this.args = args;
 		valid = parse();
 	}
 
 	private boolean parse() throws ParseException {
-		if (schema.length() == 0 && args.length ==0){
+		if (schema.length() == 0 && args.length ==0)
 			return true;
 			parseSchema();
 			try{
@@ -40,7 +40,7 @@ public class Args {
 			}
 			return valid;
 		}
-	}
+	
 
 
 	private boolean parseSchema() throws ParseException {
@@ -169,7 +169,7 @@ public class Args {
 	}
 	
 	
-	private void setStringArg(char argChar) throws ArgsExeption{
+	private void setStringArg(char argChar) throws ArgsException{
 		currentArgument ++;
 		try{
 			stringArgs.put(argChar, args[currentArgument]);
@@ -259,6 +259,13 @@ public class Args {
 	}
 	
 	private class ArgsException extends Exception{
+		
+	}
+	private class ParseException extends Exception{
+
+		public ParseException(String format, int i) {
+			// TODO Auto-generated constructor stub
+		}
 		
 	}
 }
