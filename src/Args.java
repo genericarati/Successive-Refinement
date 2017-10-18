@@ -172,7 +172,7 @@ public class Args {
 	private void setStringArg(char argChar) throws ArgsException{
 		currentArgument ++;
 		try{
-			stringArgs.get(argChar).setString(args[currentArgument]);
+			stringArgs.get(argChar).set(args[currentArgument]);
 		}catch(ArrayIndexOutOfBoundsException e){
 			valid = false;
 			errorArgumentId = argChar;
@@ -229,7 +229,7 @@ public class Args {
 	
 	
 	public String getString(char arg){
-		return stringArgs.get(arg).getString();
+		return (String) stringArgs.get(arg).get();
 	}
 	
 	public int getInt(char arg){
@@ -262,7 +262,6 @@ public class Args {
 	}
 	
 	private  abstract class ArgumentMarshaller {
-		private String stringValue;
 		private int integerValue;
 		
 		
@@ -272,14 +271,6 @@ public class Args {
 
 		public abstract Object get();
 
-		public void setString(String s) {
-		   stringValue = s;	
-		}
-
-
-		public String getString() {
-			return stringValue == null ? "" : stringValue;
-		}
 
 		public int getInteger() {
 			return integerValue;
@@ -305,6 +296,18 @@ public class Args {
 	}
 	
 	private class StringArgumentMarshaller extends ArgumentMarshaller{
+
+		private String stringValue;
+
+		@Override
+		public Object get() {
+			return stringValue;
+		}
+
+		@Override
+		public void set(String s) {
+		     stringValue = s;	
+		}
 		
 	}
 	
