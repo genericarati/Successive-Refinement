@@ -12,7 +12,7 @@ public class Args {
 	private Set<Character> unexpectedArguments = new TreeSet<Character>();
 	private Map<Character, ArgumentMarshaller> booleanArgs = new HashMap<Character, ArgumentMarshaller>();
 	private Map<Character, ArgumentMarshaller> stringArgs = new HashMap<Character, ArgumentMarshaller>();
-	private Map<Character, Integer> intArgs = new HashMap<Character, Integer>();
+	private Map<Character, ArgumentMarshaller> intArgs = new HashMap<Character, ArgumentMarshaller>();
 	private Set<Character> argsFound = new HashSet<Character>();
 	private int currentArgument;
 	private char errorArgumentId = '\0';
@@ -80,7 +80,7 @@ public class Args {
 	}
 	
 	private void parseIntegerSchemaElement(char elementId) {
-		intArgs.put(elementId, 0);	
+		intArgs.put(elementId, new IntegerArgumentMarshaller());	
 	}
 	
 	private void parseStringSchemaElement(char elementId) {
@@ -152,7 +152,7 @@ public class Args {
 		String parameter = null;
 		try{
 			parameter = args[currentArgument];
-			intArgs.put(argChar, new Integer(parameter));
+			intArgs.get(argChar).setInt(Integer.parseInt(parameter));
 		}catch(ArrayIndexOutOfBoundsException e){
 			valid = false;
 			errorArgumentId = argChar;
@@ -227,16 +227,14 @@ public class Args {
 	}
 	
 	
-	private int zeroIfNull(Integer i){
-		return i == null ? 0 :i;
-	}
 	
 	public String getString(char arg){
 		return stringArgs.get(arg).getString();
 	}
 	
 	public int getInt(char arg){
-		return zeroIfNull(intArgs.get(arg));
+		ArgumentMarshaller am = intArgs.get(arg);
+		return am == null ? 0 : am.getInteger();
 	}
 	
 	public boolean getBoolean(char arg){
@@ -266,11 +264,16 @@ public class Args {
 	private class ArgumentMarshaller {
 		private boolean booleanValue = false;
 		private String stringValue;
+		private int integerValue;
 		
 		public void setBoolean(boolean value){
 			booleanValue = value;
 		}
 		
+		public void setInt(Integer i) {
+		    integerValue = i;	
+		}
+
 		public void setString(String s) {
 		   stringValue = s;	
 		}
@@ -282,6 +285,10 @@ public class Args {
 		public String getString() {
 			return stringValue == null ? "" : stringValue;
 		}
+
+		public int getInteger() {
+			return integerValue;
+		}
 	}
 	
 	private class BooleanArgumentMarshaller extends ArgumentMarshaller{
@@ -292,7 +299,7 @@ public class Args {
 		
 	}
 	
-	private class IntergerArgumentMarshaller extends ArgumentMarshaller{
+	private class IntegerArgumentMarshaller extends ArgumentMarshaller{
 		
 	}
 }
